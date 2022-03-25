@@ -3,6 +3,88 @@ const PAPER = "paper";
 const SCISSORS = "scissors";
 const BEATS_STRING = "beats";
 
+const rockButton = document.querySelector(".button-rps-rock");
+const paperButton = document.querySelector(".button-rps-paper");
+const scissorsButton = document.querySelector(".button-rps-scissors");
+
+let result = "";
+let humanCountWins = 0;
+let machineCountWins = 0;
+
+rockButton.addEventListener("click",() =>{
+  result = playRound(ROCK,computerPlay());
+  gameOrchestator(result);
+});
+
+paperButton.addEventListener("click",() =>{
+  result = playRound(PAPER,computerPlay());
+  gameOrchestator(result);
+});
+
+scissorsButton.addEventListener("click",() =>{
+  result = playRound(SCISSORS,computerPlay());
+  gameOrchestator(result);
+});
+
+
+/**
+ * Updates the result, the score showing the 
+ * information in the HTML. Also checks the 
+ * end of the game
+ * @param {string} result 
+ */
+function gameOrchestator(result){
+  updateResult(result);
+  updateScore(whoWon(result));
+  showScore();
+  isEndOfGame();
+}
+
+
+/**
+ * Validates if the game is over
+ */
+function isEndOfGame(){
+  let whoWonMessage = "Human wins";
+  if(humanCountWins == 5 || machineCountWins == 5){ 
+    if(machineCountWins == 5) whoWonMessage = "Machine wins";
+    alert("End of the game! "+whoWonMessage);
+    resetGame();
+  }
+}
+
+/**
+ * Reset the variables of the game
+ */
+function resetGame(){
+  document.getElementById("score").innerHTML = "Human 0 Machine 0";
+  document.getElementById("result").innerHTML = "";
+  machineCountWins = 0;
+  humanCountWins = 0;
+}
+
+/**
+ * Updates the score information given the result of the game
+ * @param {number} codeResult 
+ */
+function updateScore(codeResult){
+  if(codeResult == 1){
+    humanCountWins++;
+  }else if(codeResult == 0){
+    machineCountWins++;
+  }
+}
+
+
+/**
+ * Updates de result text with the new result of the game
+ * @param {string} result 
+ */
+function updateResult(result){
+  document.getElementById("result").innerHTML = result;
+}
+
+
 /**
  * 
  * @returns a random choice from the computer
@@ -21,7 +103,7 @@ function computerPlay(){
           result = SCISSORS;
           break;
   }
-  console.log("Machine chose: "+result);
+  document.getElementById("machine-choice").innerHTML = "Machine chose: "+result;
   return result;  
 }
 
@@ -49,28 +131,10 @@ function playRound(playerSelection, computerSelection){
 }
 
 /**
- * 5 rounds of the excited game rock, paper, scissors
+ * shows the score of the current game
  */
-function game(){
-    let playerWins = 0;
-    let computerWins = 0;
-    let gameResult = "";
-    for(let i = 0; i < 5; i++){
-      gameResult = playRound(playerOptionDecoded(),computerPlay());
-      if(whoWon(gameResult) === 1){
-          playerWins++;
-      }else if(whoWon(gameResult) === 0){
-          computerWins++;
-      }
-      showScore(playerWins,computerWins);
-    }
-    
-}
-
-function showScore(playerWins,computerWins){
-    console.log(`Human: ${playerWins} Machine: ${computerWins}
-    ---------------------------------------------------------`);
-
+function showScore(){
+    document.getElementById("score").innerHTML = `Human ${humanCountWins} Machine ${machineCountWins}`;
 }
 
 /**
@@ -89,27 +153,4 @@ function whoWon(gameMessage){
   }
 }
 
-/**
- * 
- * @returns The string the user chose: `rock`, `paper` or `scissors`
- */
-function playerOptionDecoded(){
-    let playerOptionChar = PAPER;
-    let playerOption = parseInt(prompt(`Welcome to Rock, Paper, Scissors. Please select one of the following:
-    Enter 1 for paper
-    Enter 2 for scissors
-    Enter 3 for rock `));
-    if(playerOption === 1){
-      playerOptionChar = PAPER;
-    }else if(playerOption === 2){
-      playerOptionChar = SCISSORS;
-    }else if(playerOption === 3){
-      playerOptionChar = ROCK;
-    }else{
-      console.error("Invalid option");
-    }
-    console.log("User chose: "+playerOptionChar);
-    return playerOptionChar;
-}
 
-game();
